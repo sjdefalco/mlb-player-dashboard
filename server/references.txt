@@ -1,0 +1,12 @@
+https://developer.sportradar.com/baseball/reference/mlb-player-profile
+
+Example:
+Shohei Ohtani: 
+    Career hitting: curl "https://statsapi.mlb.com/api/v1/people/660271/stats?stats=career&group=hitting"
+    Career pitching: curl "https://statsapi.mlb.com/api/v1/people/660271/stats?stats=career&group=hitting"
+    Season hitting: curl "https://statsapi.mlb.com/api/v1/people/660271/stats?stats=season&group=hitting&season=2024"
+    Season pitching: curl "https://statsapi.mlb.com/api/v1/people/660271/stats?stats=season&group=pitching&season=2023"
+
+Teams and active players:
+    Teams: https://statsapi.mlb.com/api/v1/teams?sportId=1&activeStatus=Y
+    Roster: https://statsapi.mlb.com/api/v1/teams/{teamId}/roster
