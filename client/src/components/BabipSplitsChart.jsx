@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, Tooltip, Legend, Cell } from 'recharts';
 
-const OPSSplitsChart = ({ playerId }) => {
+const BABIPSplitsChart = ({ playerId }) => {
   const [splitsData, setSplitsData] = useState([]);
 
   useEffect(() => {
@@ -10,18 +10,18 @@ const OPSSplitsChart = ({ playerId }) => {
         .then(res => res.json())
         .then(data => {
             const formattedData = [
-              { name: 'L15', ops: parseFloat(data.last15.ops) },
-              { name: 'L30', ops: parseFloat(data.last30.ops) },
-              { name: 'Season', ops: parseFloat(data.season.ops) }
+              { name: 'L15', babip: parseFloat(data.last15.babip) },
+              { name: 'L30', babip: parseFloat(data.last30.babip) },
+              { name: 'Season', babip: parseFloat(data.season.babip) }
             ];
             setSplitsData(formattedData);
           })
-        .catch(err => console.error('Error fetching OPS splits:', err));
+        .catch(err => console.error('Error fetching BABIP splits:', err));
     }
   }, [playerId]);
 
   if (splitsData.length === 0) {
-    return <div>No OPS splits available.</div>;
+    return <div>No BABIP splits available.</div>;
   }
 
   return (
@@ -30,7 +30,7 @@ const OPSSplitsChart = ({ playerId }) => {
         <XAxis dataKey="name" />
         <Tooltip />
         {/* <Legend /> */}
-        <Bar dataKey="ops" name="OPS">
+        <Bar dataKey="babip" name="BABIP">
           {splitsData.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={index === splitsData.length - 1 ? '#555555' : '#8884d8'} />
           ))}
@@ -40,4 +40,4 @@ const OPSSplitsChart = ({ playerId }) => {
   );
 };
 
-export default OPSSplitsChart;
+export default BABIPSplitsChart;

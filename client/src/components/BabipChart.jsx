@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import {
   ComposedChart,
   Bar,
+  Line,
   XAxis,
   Tooltip,
   Legend,
-  Line,
   ResponsiveContainer,
-  Cell  // <-- import Cell explicitly
+  Cell
 } from 'recharts';
 
-const OPSChart = ({ playerId }) => {
+const BABIPChart = ({ playerId }) => {
   const [seasonData, setSeasonData] = useState([]);
-  const [careerOps, setCareerOps] = useState(null);
+  const [careerBabip, setCareerBabip] = useState(null);
 
   useEffect(() => {
     if (playerId) {
@@ -21,14 +21,14 @@ const OPSChart = ({ playerId }) => {
         .then((stats) => {
           const seasons = stats.filter((stat) => stat.season !== 'career');
           const careerStat = stats.find((stat) => stat.season === 'career');
-          const careerOpsValue = careerStat && careerStat.ops ? parseFloat(careerStat.ops) : null;
-          if (careerOpsValue) {
-            setCareerOps(careerOpsValue);
+          const careerBabipValue = careerStat && careerStat.babip ? parseFloat(careerStat.babip) : null;
+          if (careerBabipValue) {
+            setCareerBabip(careerBabipValue);
           }
           const processed = seasons.map((stat) => ({
             ...stat,
-            ops: parseFloat(stat.ops),
-            careerLine: careerOpsValue,
+            babip: parseFloat(stat.babip),
+            careerLine: careerBabipValue,
           }));
           setSeasonData(processed);
         })
@@ -46,21 +46,21 @@ const OPSChart = ({ playerId }) => {
         <XAxis dataKey="season" />
         <Tooltip />
         {/* <Legend /> */}
-        <Bar dataKey="ops" name="Season OPS">
+        <Bar dataKey="babip" name="Season BABIP">
           {seasonData.map((entry, index) => (
             <Cell
               key={`cell-${index}`}
-              fill={index === seasonData.length - 1 ? "#555555" : "#8884d8"} // recent year dark grey
+              fill={index === seasonData.length - 1 ? '#555555' : '#8884d8'} // Dark grey for latest season
             />
           ))}
         </Bar>
-        {careerOps && (
+        {careerBabip && (
           <Line
             dataKey="careerLine"
             type="monotone"
             stroke="red"
             dot={false}
-            name={`Career OPS`}
+            name={`Career BABIP`}
           />
         )}
       </ComposedChart>
@@ -68,4 +68,4 @@ const OPSChart = ({ playerId }) => {
   );
 };
 
-export default OPSChart;
+export default BABIPChart;

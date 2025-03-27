@@ -59,7 +59,7 @@ def hitter_stats(player_id):
     player_desc_data = player_desc_response.json()
     mlb_debut_date = player_desc_data.get("people",[])[0].get("mlbDebutDate")
     debut_year = int(mlb_debut_date.split("-")[0])
-    career_years = list(range(debut_year, current_year))
+    career_years = list(range(debut_year, current_year+1))
 
     # Fetch player stats
     player_stats = []
@@ -79,7 +79,7 @@ def hitter_stats(player_id):
                     "hr": s.get("stat", {}).get("homeRuns"),
                     "rbi": s.get("stat", {}).get("rbi"),
                     "ops": s.get("stat", {}).get("ops"),
-                    "babip": s.get("babip", {}).get("ops"),
+                    "babip": s.get("stat", {}).get("babip"),
                 })
 
     career_stats = []
@@ -97,15 +97,38 @@ def hitter_stats(player_id):
                 "hr": s.get("stat", {}).get("homeRuns"),
                 "rbi": s.get("stat", {}).get("rbi"),
                 "ops": s.get("stat", {}).get("ops"),
-                "babip": s.get("babip", {}).get("ops"),
+                "babip": s.get("stat", {}).get("babip"),
             })
 
     player_stats.extend(career_stats)
     
     return jsonify(player_stats)
 
+@app.route('/api/hitter_stats/<int:player_id>/splits')
+def hitter_splits(player_id):
+    today = datetime.date.today()
+    thirty_days_ago = today - datetime.timedelta(days=30)
+    fifteen_days_ago = today - datetime.timedelta(days=15)
+    season_start = datetime.date(today.year, 1, 1)  # Year start
+
+    def get_stats(start_date, end_date):
+        stats_url = f"https://statsapi.mlb.com/api/v1/people/{player_id}/stats?stats=byDateRange&group=hitting&startDate={start_date}&endDate={end_date}"
+        res = requests.get(stats_url).json()
+        try:
+            stats = res["stats"][0]["splits"][0]["stat"]
+            return {"ops": stats.get("ops"), "babip": stats.get("babip")}
+        except (IndexError, KeyError):
+            return {"ops": None, "babip": None}
+
+    splits_data = {
+        "season": get_stats(season_start, today),
+        "last30": get_stats(thirty_days_ago, today),
+        "last15": get_stats(fifteen_days_ago, today)
+    }
+
+    return jsonify(splits_data)
+
 
 
 if __name__ == '__main__':
     app.run(debug=True)
-
