@@ -10,8 +10,8 @@ const SplitsBarChart = ({ playerId, statKey, title, color, endpoint }) => {
         .then(res => res.json())
         .then(data => {
           const formattedData = [
-            { name: 'L15', value: parseFloat(data.last15[statKey]) },
             { name: 'L30', value: parseFloat(data.last30[statKey]) },
+            { name: 'L15', value: parseFloat(data.last15[statKey]) },
             { name: 'Season', value: parseFloat(data.season[statKey]) }
           ];
           setSplitsData(formattedData);

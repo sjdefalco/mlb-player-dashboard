@@ -3,7 +3,7 @@ import { Container } from 'react-bootstrap';
 
 const Header = () => (
   <Container className="my-4 text-center">
-    <h1>MLB Stats Dashboard</h1>
+    <h1>MLB Stats At a Glance</h1>
   </Container>
 );
 
