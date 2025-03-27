@@ -182,7 +182,7 @@ function App() {
                 <CareerChart
                   playerId={selectedPlayerId}
                   statKey="pitchesPerInning"
-                  title="K:BB Ratio"
+                  title="Pitches per Inning"
                   color="#8884d8"
                   endpoint={`/api/pitcher_stats/${selectedPlayerId}`}
                 />
