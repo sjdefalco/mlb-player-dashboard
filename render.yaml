@@ -1,0 +1,14 @@
+# render.yaml
+services:
+  - type: web
+    name: mlb-dashboard
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: FLASK_ENV
+        value: production
+    plan: free
+    autoDeploy: true
+    region: oregon
+    rootDir: server
