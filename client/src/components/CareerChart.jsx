@@ -2,42 +2,41 @@ import React, { useState, useEffect } from 'react';
 import {
   ComposedChart,
   Bar,
+  Line,
   XAxis,
   Tooltip,
-  Legend,
-  Line,
   ResponsiveContainer,
-  Cell  // <-- import Cell explicitly
+  Cell
 } from 'recharts';
 
-const OPSChart = ({ playerId }) => {
+const CareerChart = ({ playerId, statKey, title, color, endpoint }) => {
   const [seasonData, setSeasonData] = useState([]);
-  const [careerOps, setCareerOps] = useState(null);
+  const [careerAvg, setCareerAvg] = useState(null);
 
   useEffect(() => {
     if (playerId) {
-      fetch(`/api/hitter_stats/${playerId}`)
+      fetch(endpoint)
         .then((res) => res.json())
         .then((stats) => {
           const seasons = stats.filter((stat) => stat.season !== 'career');
           const careerStat = stats.find((stat) => stat.season === 'career');
-          const careerOpsValue = careerStat && careerStat.ops ? parseFloat(careerStat.ops) : null;
-          if (careerOpsValue) {
-            setCareerOps(careerOpsValue);
+          const careerValue = careerStat && careerStat[statKey] ? parseFloat(careerStat[statKey]) : null;
+          if (careerValue) {
+            setCareerAvg(careerValue);
           }
           const processed = seasons.map((stat) => ({
             ...stat,
-            ops: parseFloat(stat.ops),
-            careerLine: careerOpsValue,
+            value: parseFloat(stat[statKey]),
+            careerLine: careerValue,
           }));
           setSeasonData(processed);
         })
-        .catch((err) => console.error('Error fetching hitter stats:', err));
+        .catch((err) => console.error(`Error fetching ${title} stats:`, err));
     }
-  }, [playerId]);
+  }, [playerId, statKey, endpoint, title]);
 
   if (!seasonData || seasonData.length === 0) {
-    return <div>No stats available.</div>;
+    return <div>No {title} data available.</div>;
   }
 
   return (
@@ -45,22 +44,21 @@ const OPSChart = ({ playerId }) => {
       <ComposedChart data={seasonData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
         <XAxis dataKey="season" />
         <Tooltip />
-        {/* <Legend /> */}
-        <Bar dataKey="ops" name="Season OPS">
+        <Bar dataKey="value" name={`Season ${title}`}>
           {seasonData.map((entry, index) => (
             <Cell
               key={`cell-${index}`}
-              fill={index === seasonData.length - 1 ? "#555555" : "#8884d8"} // recent year dark grey
+              fill={index === seasonData.length - 1 ? '#555555' : color}
             />
           ))}
         </Bar>
-        {careerOps && (
+        {careerAvg && (
           <Line
             dataKey="careerLine"
             type="monotone"
             stroke="red"
             dot={false}
-            name={`Career OPS`}
+            name={`Career ${title}`}
           />
         )}
       </ComposedChart>
@@ -68,4 +66,4 @@ const OPSChart = ({ playerId }) => {
   );
 };
 
-export default OPSChart;
+export default CareerChart;
