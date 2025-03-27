@@ -62,29 +62,45 @@ def hitter_stats(player_id):
     career_years = list(range(debut_year, current_year))
 
     # Fetch player stats
-    curr_stats_url = f"https://statsapi.mlb.com/api/v1/people/{player_id}/stats?stats=season&group=hitting&season={current_year}"
-    curr_stats_response = requests.get(curr_stats_url)
-    curr_stats_data = curr_stats_response.json()
-    curr_stats = curr_stats_data.get("stats", [])
-
-    # Get starting date from https://statsapi.mlb.com//api/v1/people/665489
-    # Extract starting year
-    # Pull all stats for prior years
-    # Pull career averages
-    
     player_stats = []
-    
-    # For each season, fetch the player stats
-    for stat in curr_stats:
+    for year in career_years:
+        stats_url = f"https://statsapi.mlb.com/api/v1/people/{player_id}/stats?stats=season&group=hitting&season={year}"
+        stats_response = requests.get(stats_url)
+        stats_data = stats_response.json()
+        stats = stats_data.get("stats", [])
+        
+        # For each season, fetch the player stats
+        for stat in stats:
+            stats = stat.get("splits", [])
+            for s in stats:
+                player_stats.append({
+                    "season": str(year),
+                    "avg": s.get("stat", {}).get("avg"),
+                    "hr": s.get("stat", {}).get("homeRuns"),
+                    "rbi": s.get("stat", {}).get("rbi"),
+                    "ops": s.get("stat", {}).get("ops"),
+                    "babip": s.get("babip", {}).get("ops"),
+                })
+
+    career_stats = []
+    career_stats_url = f"https://statsapi.mlb.com/api/v1/people/{player_id}/stats?stats=career&group=hitting"
+    career_stats_response = requests.get(career_stats_url)
+    career_stats_data = career_stats_response.json()
+    career = career_stats_data.get("stats", [])
+    for stat in career:
         stats = stat.get("splits", [])
         for s in stats:
-            player_stats.append({
-                "season": current_year,
+            season = "career"
+            career_stats.append({
+                "season": season,
                 "avg": s.get("stat", {}).get("avg"),
                 "hr": s.get("stat", {}).get("homeRuns"),
                 "rbi": s.get("stat", {}).get("rbi"),
-                "ops": s.get("stat", {}).get("ops")
+                "ops": s.get("stat", {}).get("ops"),
+                "babip": s.get("babip", {}).get("ops"),
             })
+
+    player_stats.extend(career_stats)
     
     return jsonify(player_stats)
 

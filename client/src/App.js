@@ -1,22 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
-import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Container, Row } from 'react-bootstrap';
 import Header from './components/Header';
 import PlayerDropdown from './components/PlayerDropdown';
 import StatCard from './components/StatCard';
+import OPSChart from './components/OPSChart';
 
 function App() {
+  const [selectedPlayerId, setSelectedPlayerId] = useState(null);
+
   return (
     <Container>
       <Header />
-      <PlayerDropdown />
+      <PlayerDropdown onSelect={setSelectedPlayerId} />
 
       <Row className="d-flex flex-wrap justify-content-center">
-        <StatCard title="Batting Trends" />
-        <StatCard title="Season Summary" />
-        <StatCard title="Pitching Trends" />
-        <StatCard title="Overall Rating" />
+        {selectedPlayerId && (
+          <StatCard title="OPS">
+            <OPSChart playerId={selectedPlayerId} />
+          </StatCard>
+        )}
+        {/* You can add more StatCard instances with different charts below */}
       </Row>
     </Container>
   );

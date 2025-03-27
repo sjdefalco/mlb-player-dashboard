@@ -7,6 +7,8 @@ Shohei Ohtani:
     Season hitting: curl "https://statsapi.mlb.com/api/v1/people/660271/stats?stats=season&group=hitting&season=2024"
     Season pitching: curl "https://statsapi.mlb.com/api/v1/people/660271/stats?stats=season&group=pitching&season=2023"
 
+    Splits, allegedly: curl "https://statsapi.mlb.com/api/v1/people/660271/stats?stats=statSplits&group=hitting&season=2024"
+
 Teams and active players:
     Teams: https://statsapi.mlb.com/api/v1/teams?sportId=1&activeStatus=Y
     Roster: https://statsapi.mlb.com/api/v1/teams/{teamId}/roster
