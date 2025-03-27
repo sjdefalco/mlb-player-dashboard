@@ -6,9 +6,16 @@ import os
 
 app = Flask(__name__, static_folder='../client/build', static_url_path='/')
 
-@app.route('/')
-def serve():
-    return send_from_directory(app.static_folder, 'index.html')
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if os.environ.get('FLASK_ENV') == 'production':
+        if path != "" and os.path.exists(app.static_folder + '/' + path):
+            return send_from_directory(app.static_folder, path)
+        else:
+            return send_from_directory(app.static_folder, 'index.html')
+    else:
+        return "React frontend is running separately in development."
 
 # example API route
 @app.route('/api/ping')
