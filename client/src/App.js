@@ -5,6 +5,7 @@ import PlayerDropdown from './components/PlayerDropdown';
 import StatCard from './components/StatCard';
 import CareerChart from './components/CareerChart';
 import SplitsBarChart from './components/SplitsBarChart';
+import TeamChart from './components/TeamChart';
 
 function App() {
   const [selectedPlayerId, setSelectedPlayerId] = useState(null);
@@ -203,6 +204,56 @@ function App() {
 
           </>
         )}
+      </Tab>
+      <Tab eventKey="teams" title="Teams">
+        <StatCard title="Team OPS">
+          <TeamChart 
+            statKey="ops"
+            title="OPS"
+            color="#8884d8"
+            endpoint={'/api/team_stats/hitting'}
+          />
+        </StatCard>
+        <StatCard title="Team BABIP">
+          <TeamChart 
+            statKey="babip"
+            title="BABIP"
+            color="#8884d8"
+            endpoint={'/api/team_stats/hitting'}
+          />
+        </StatCard>
+        <StatCard title="Team ERA">
+          <TeamChart 
+            statKey="era"
+            title="ERA"
+            color="#8884d8"
+            endpoint={'/api/team_stats/pitching'}
+          />
+        </StatCard>
+        <StatCard title="Team WHIP">
+          <TeamChart 
+            statKey="whip"
+            title="WHIP"
+            color="#8884d8"
+            endpoint={'/api/team_stats/pitching'}
+          />
+        </StatCard>
+        <StatCard title="Team Pitches per Inning">
+          <TeamChart 
+            statKey="pitchesPerInning"
+            title="Pitches per Inning"
+            color="#8884d8"
+            endpoint={'/api/team_stats/pitching'}
+          />
+        </StatCard>
+        <StatCard title="Team OPS Against">
+          <TeamChart 
+            statKey="opsAgainst"
+            title="OPS Against"
+            color="#8884d8"
+            endpoint={'/api/team_stats/pitching'}
+          />
+        </StatCard>
       </Tab>
     </Tabs>
     </Container>

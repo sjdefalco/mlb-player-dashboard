@@ -24,6 +24,100 @@ def ping():
 
 CORS(app)
 
+#########################################################
+## ------Team Stats-------------------------------- #####
+#########################################################
+
+TEAM_IDS = [133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 158, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121]
+
+TEAM_ABR_LOOKUP = {
+    "Athletics": "ATH",
+    "Toronto Blue Jays": "TOR",
+    "Tampa Bay Rays": "TB",
+    "Boston Red Sox": "BOS",  
+    "New York Yankees": "NYY",
+    "Baltimore Orioles": "BAL",
+    "Chicago White Sox": "CWS",
+    "Cleveland Guardians": "CLE",
+    "Detroit Tigers": "DET",
+    "Kansas City Royals": "KCR",
+    "Minnesota Twins": "MIN",
+    "Houston Astros": "HOU",
+    "Los Angeles Angels": "LAA",
+    "Texas Rangers": "TEX",
+    "Atlanta Braves": "ATL",
+    "Miami Marlins": "MIA",
+    "New York Mets": "NYM",
+    "Philadelphia Phillies": "PHI",
+    "Washington Nationals": "WSN",
+    "Chicago Cubs": "CHC",
+    "Cincinnati Reds": "CIN",
+    "Milwaukee Brewers": "MIL",
+    "Pittsburgh Pirates": "PIT",
+    "St. Louis Cardinals": "STL",
+    "Arizona Diamondbacks": "ARI",
+    "Colorado Rockies": "COL",
+    "Los Angeles Dodgers": "LAD",
+    "San Diego Padres": "SDP",
+    "San Francisco Giants": "SFG",
+    "Seattle Mariners": "SEA",
+}
+
+
+@app.route('/api/team_stats/hitting')
+def team_hitting():
+    current_year = datetime.datetime.now().year
+    team_stats = []
+    for team_id in TEAM_IDS:
+        stats_url = f"https://statsapi.mlb.com/api/v1/teams/{team_id}/stats?stats=season&season={current_year}&group=hitting"
+        stats_response = requests.get(stats_url)
+        stats_data = stats_response.json()
+        stats = stats_data.get("stats", [])
+        stats = stats[0].get("splits", [])
+        team = stats[0].get("team", {}).get("name")
+        stats = stats[0].get("stat", {})
+        team_stats.append({
+            "team": team,
+            "abr": TEAM_ABR_LOOKUP[team],
+            "avg": float(stats.get("avg")),
+            "runs": stats.get("runs"),
+            "homeRuns": stats.get("homeRuns"),
+            "rbi": stats.get("rbi"),
+            "ops": float(stats.get("ops")),
+            "babip": float(stats.get("babip"))
+        })
+    
+    team_stats.sort(key=lambda x: x["abr"], reverse=False)
+
+    return jsonify(team_stats)
+
+@app.route('/api/team_stats/pitching')
+def team_pitching():
+    current_year = datetime.datetime.now().year
+    team_stats = []
+    for team_id in TEAM_IDS:
+        stats_url = f"https://statsapi.mlb.com/api/v1/teams/{team_id}/stats?stats=season&season={current_year}&group=pitching"
+        stats_response = requests.get(stats_url)
+        stats_data = stats_response.json()
+        stats = stats_data.get("stats", [])
+        stats = stats[0].get("splits", [])
+        team = stats[0].get("team", {}).get("name")
+        stats = stats[0].get("stat", {})
+        team_stats.append({
+            "team": team,
+            "abr": TEAM_ABR_LOOKUP[team],
+            # "stolenBasePercentage": float(stats.get("stolenBasePercentage")),
+            "era": float(stats.get("era")),
+            "whip": float(stats.get("whip")),
+            "pitchesPerInning": float(stats.get("pitchesPerInning")),
+            "opsAgainst": float(stats.get("ops")),
+        })
+    
+    team_stats.sort(key=lambda x: x["abr"], reverse=False)
+
+    return jsonify(team_stats)
+
+
 
 #########################################################
 ## ------Lists of Active Players------------------- #####
